@@ -1,0 +1,67 @@
+Part A Mandatory extensions:
+
+1. Add an extra template
+We added Weekly template and Weekly Schedule. Weekly Schedule is a schedule with seven consecutive dates. It does not
+necessarily have to start at Monday and it can cross months (e.g. end of January to beginning of February) as long
+as it's seven consecutive dates.
+
+2. Add the ability for one other kind of user to log in.
+We added private user and public user. Private user and public user can only create private and public schedules
+respectively. However, Admin user can change public user's schedules to private and can change private user's schedules
+to public.
+
+3. Make at least one change to one of your templates from Phase 1 that results in a change to the way the
+user interacts with it.
+We modify the way When admin user need to reset the time limits for template. In phase 1, we ask admin user to type the
+minimum time and maximum time of event separately. In phase 2, we ask admin user to type a time range (example: 0.5, 2)
+where the first number represents the minimum time and the second one represents the maximum time in unit hour.
+
+4. Allow admin users to change any of the users' creations from private to public or public to private.
+Yes, we implemented this. Note: Admin can only change users' creations from private to public or vice versa but they
+can not change users' creations to friend-only.
+
+5. The admin user should be able to interact with every user's creations, even if they are private.
+If the admin user decides that the content of the creation is not appropriate for the app,
+Admin user can now interact with every user's creations and can delete any creation if they are inappropriate.
+
+6. The admin user should also be able to "suspend" a user, which means the user is not allowed to
+log in for x number of days, where x is a number decided by the admin user.
+Yes, we implemented this. And admin user can suspend only regular/public/private user.
+
+Part B Optional Extensions:
+We chose the first four bullet points to implement.
+
+1. We implemented all the features stated in the first point. A user can request an "email" that creates a text file named
+by their email and this text file contains user's information including the temporary password that
+can be used to log back into the system only once. After using that temporary password, they would be asked to change a
+permanent password that is at least "weak", which would be the permanent password.
+If user request an "email" accidentally, they can still use their original password to login as well.
+
+2. We implemented all the features stated in the second point. Admin can also choose a template to create their own
+schedules, but they can only make their schedules public or private (does not allow friend-only). For users that are frozen,
+we can still see their schedules, but we cannot interact with them(edit).
+
+3. We did all the features states in the third point.
+A user can recover a deleted schedule or event as long as they
+didn't log out of the program. Once they log out of the program, they cannot un-delete the schedules or events.
+A user can revert to an earlier status as long as they stay within the options of editing the same schedule. This means,
+they can no longer revert schedule 1 to an earlier status once they start editing schedule 2.
+Changing a schedule to friend-only means the schedule will be shared with the friends of the author (i.e. creator of
+this schedule).
+We allow regular/public/private user to add/delete friend to any other regular/public/private user.
+All users can interact with public schedules or schedules shared with them but only the author (i.e. creator of
+this schedule) or an admin user can delete this schedule.
+
+4. We did all the features states in the fourth point.
+We design a message system that allows all permanent users to interact with messages. Permanent users are able to send,
+delete, reply and read messages. Regular users have their own personal chat history. They can select one message from
+the chat history and choose to delete or reply. Regular(public/private) users can only send message to one regular as long
+as he knows the receiver email. Regular users can also send message to admin user and save it in the commonInbox.
+Admin users share one
+commonInbox that stores all messages interact with regular users. Admin users can send messages to a particular user,
+a list of users, or all permanent users at a time. There are user emails be printed and users including
+ regular/public/private/admin could choose an email (or emails)to send the message.
+When send a message, user can choose whether to attach a schedule (creation) in the message. There will display user's
+own schedules that allow the user to attach.
+Also, Users can directly link to a schedule from the personal chat history messages. They can choose a message that
+contains a schedule from their chat history and edit that schedule directly.

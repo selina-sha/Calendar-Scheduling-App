@@ -1,0 +1,114 @@
+1. Observable/Observer
+Classes involved in this design pattern: all classes in GateWay package(FileListener, FilePublisher, FileReadWriter,
+ReadFileListener, SaveFileListener), and some classes in Controller package(MessageListener, MessagePublisher,
+MessageSender, SendMsgListener).Facade(to initialize and set up the operations and subscribers)
+Reason for implementing this design pattern:
+For the first group of classes, we decided to implement this design pattern
+according to our Phase 1 feedback of merging our read/writer classes. As we are dealing with more files in Phase 2 than Phase 1,
+we choose to put methods for read and save all files inside two separate classes as two listeners. And each class
+implements the update method from the interface FileListener. Then inside each update method, we call the corresponding
+ method for read/save inside classes based on the input action type, which is passed from notify method and
+ readFile/saveFile method. Also, as we have multiple observers, we chose to implement a FilePublisher to subscribe and
+ unsubscribe our listeners for each action type to manager them inside a HashMap.
+ In this way, after we first set up the action types, and listeners to be
+ subscribed(in Facade class), we can read/save files by simply calling readFile/saveFile method in FileReadWriter by
+ passed in actionType
+ each time to notify their subscribers when things are changed or updated while running program. So we do not need to know
+ anything about how the files are
+ read/saved and these Observable/Observer classes satisfies single responsibility and they are open for extension when more
+ methods for read/save are added or more listener classes that implement FileListener are added.
+
+For the second group of classes, we decided to implement this design pattern because sending message matches the goal of
+Observable/Observer design pattern, which maintains consistency between sender and receiver as they
+ are related and notifies the specific observers anytime when a message is sent. There are generally four ways
+of sending messages between types of sender and receiver. Thus, we would like to use Observable/Observer in the similar
+way as our first group with MessageSender having one method to send message and it has one parameter to specify the way
+of sending message(admin to other, admin to all, regular to other, regular to admin). This would notify our subscribers
+based on action type and calls the update method inside SendMsgListener. This update method calls corresponding methods in
+MessageManager to do the task of sending message and update things. Also, this Observable/Observer pattern is doing the
+ similar things as a controller for Message, which calls method in MessageManager and our code structure becomes more clearly
+and precise and easy for extension as well.
+
+2. Facade
+Classes involved in this design pattern: Facade, ScheduleSystem, Schedule Manager, Template Manager, TemplateSystem,
+UserManager, LoginSystem, FileReadWriter, MessageManager, MessageSender.
+Reason for implementing this design pattern: As the user at the keyboard grow to have more power, there
+are increasing interactions between different controller classes such as between TemplateSystem and ScheduleSystem and
+between use cases such as UserManager and Message Manager as well. So we want to reduce the dependency between classes.
+Also, we would like to have one classes that connect
+user, template, schedule, and read/save file, and send message all together.
+So we are in need for a class that is responsible for multiple "actors". However, SOLID principles suggest that
+we should only have one actor per class. Thus, we decided to implement the Facade design pattern, which delegates
+each responsibility to the individual classes by including attributes to each individual class.
+We choose to initialize all of our controllers and use cases except for UI inside Facade instead of in Main. This could
+make our Main smaller by simply initializing Facade.
+Also, we have method inside Facade to set up our Observable/Observer classes and include some methods that could be
+called directly in our UI. This makes our methods more easier to use and our structure more clearly. Additionally,
+Facade satisfies the open/closed principle, which could be easy to modify and extend.
+
+3. Simple Factory
+Classes involved in this design pattern: ScheduleManager, DailySchedule, WeeklySchedule, MonthlySchedule and ScheduleFactory.
+Reason for implementing this design pattern: We decided to implement this design pattern because this design pattern
+fits the problem that we want to solve. We learned in lecture that simple factory is a solution to the problem of one
+class wanting to interact with many possible related objects. In our program, ScheduleManager is responsible for
+creating new DailySchedule, WeeklySchedule or MonthlySchedule depending on the type of template a user selected. So
+ScheduleManager wants to interact with three related objects. We also want to obscure the creation process of these
+schedules so that we can reduce dependency and add new types of schedules more easily in the future. This is again
+achieved by implementing the ScheduleFactory store all the constructor calls. Different schedule types have different
+formats of schedule dats. Without the ScheduleFactory, createSchedule method in ScheduleManager needs to know all about
+those constraints. But now the ScheduleFactory handles these constraints, so we can add new schedule types or
+modify existing schedule types without changing the createSchedule method in ScheduleManager.
+
+4. Iterator
+In phase1, we have user id, template id and schedule id to use iterators from 10000. (Example: the first template has
+template id 10000, the second template has template id 10001, etc). As we wants to find a template entity, we
+can iterate the template id and find the corresponding template object. We have independent iterators over the
+elements of the container. After we receive TA's feedback for phase 1,
+we decided not to use an iterator to store ids. We use a unique UUID for User, Template and Schedule object, which is
+better for storage under the hood.
+Also, we have a lot of hidden iterators in for loop. For example, in MessageUI's linkSchedule method, we have a for
+loop to print out the messages in the user's personal chat history. Since the messages is iterable, it has an nested
+iterator class inside the ArrayList personalChatHistory. In UserManager, we always get or check user's email and id by
+looping over the ArrayList permanentUsers. We use a lot of for loops in other parts of the program as well.
+
+5. Dependency Injection
+Classes involved in this design pattern: Message, MessageManager, MessageUI
+We try to avoid hard dependency by creating objects outside and passing objects into the class. For example,
+in MessageUI, we pass in the user id instead of the User object to allow a user to interact with the message related
+instructions. In such a way, the User object can be used or tested independently. The User can change his attributes
+without influence the Message, MessageManager and MessageUI. Same thing happens in UserManager, we use arrayList and
+HashMap to store different information for users. We choose to only store all PermanentUser objects in one ArrayList,
+and store user's email as an identifier for other ArrayList or HashMap so that it would be more efficient and save memory.
+Also, we choose to pass in Facade object(facade) into our UserUI, and get and store facade.ls LoginSystem for one of
+our attributes. When calling methods for user part, we always call method from LoginSystem even if some methods in
+LoginSystem are simply calling method from UserManager. The reason is that we want to reduce dependency,
+so we only want UserUI to depend on LoginSystem instead of UserManager.
+
+6. Adaptor
+We did not implement an adaptor for phase 2. For Template related object, the WeeklyTemplate extend super class Template
+just like the other 2 types of templates (Daily and Monthly). All the features for the subclass WeeklyTemplate is
+inherited from Template and we don't need to add new features. Thus, it implements the methods that are required for the
+rest of the program to interact with the class. So it is not necessary to have an Adaptor class to contain an instance
+of the Template Adaptee class. Same thing happens for the Schedule related object, a new type of schedule called
+WeeklySchedule is created in phase2 that extend from the superclass Schedule and includes all the methods or
+features we need for phase 2. We reuse the class from the previous phase 1 program and it also works in the current
+situation in phase 2.
+
+7. Abstract Factory
+Since we implement the simple factory design pattern for ScheduleManager, DailySchedule, WeeklySchedule,
+MonthlySchedule, we don't need to use an abstract factory. we can add new schedule types or
+modify existing schedule types without changing the createSchedule method in ScheduleManager. Also, since there
+is only Schedule object need to handle, it is not necessary to create related Factory class that each family of related
+or dependent objects. Just one Factory class is enough to have related Schedule constructors to call.
+
+8. Builder
+A builder is user to split the construction of a complex structure of objects from its representation,
+so that the same construction process can create different representations.
+It is used to construct a complex object step by step fashion and the final step need to return the object.
+Since we don't have many complex structure of objects ( In phase 2, we only have three major objects that related to
+Template, Schedule and User), we don't need a lot of objects inside a constructor for UIs or Systems or Facade.
+We have Facade to initialize the Template, Schedule and User related class through passing them as attributes so we
+don't need a Builder class.
+Thus, the initialization code is not buried inside a monstrous constructor with lots of parameters.
+So, we did not extract the object construction code out of its own class and move it to separate Builder class. And it
+works fine: we don't need to initialize a lot when we construct an object structure.
